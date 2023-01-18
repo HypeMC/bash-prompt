@@ -26,3 +26,7 @@ PROMPT_COMMAND="__prompt $color_prompt yes"
 ```
 
 ![With the hostname](screen2.png)
+
+When the user is root:
+
+![When root](screen3.png)

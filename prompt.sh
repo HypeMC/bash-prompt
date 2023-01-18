@@ -12,6 +12,15 @@ function __prompt() {
     local -r C_BOLD_GREEN='\[\e[01;32m\]'
     local -r C_BOLD_YELLOW='\[\e[01;33m\]'
     local -r C_BOLD_PURPLE='\[\e[01;35m\]'
+    local -r C_BOLD_CYAN='\[\e[01;36m\]'
+
+    if [ "$UID" = 0 ]; then
+        local -r C_USER=$C_RED
+        local -r C_HOST=$C_BOLD_CYAN
+    else
+        local -r C_USER=$C_CYAN
+        local -r C_HOST=$C_BOLD_GREEN
+    fi
 
     local git_prompt=''
     if git rev-parse --git-dir >/dev/null 2>&1; then
@@ -41,14 +50,14 @@ function __prompt() {
     local host=''
     if [ "$show_host" = yes ]; then
         if [ "$use_color" = yes ]; then
-            host="${C_YELLOW}@${C_BOLD_RED}<${C_BOLD_GREEN}\h${C_BOLD_RED}>${C_NONE}"
+            host="${C_YELLOW}@${C_BOLD_RED}<${C_HOST}\h${C_BOLD_RED}>${C_NONE}"
         else
             host='@!\h!'
         fi
     fi
 
     if [ "$use_color" = yes ]; then
-        PS1="╭─${C_WHITE}\t${C_NONE} \${debian_chroot:+(\$debian_chroot)}${C_CYAN}\u${C_NONE}${host}: ${C_BOLD_YELLOW}\w${C_NONE}${git_prompt}\n╰─${C_BOLD_PURPLE}\$${C_NONE} "
+        PS1="╭─${C_WHITE}\t${C_NONE} \${debian_chroot:+(\$debian_chroot)}${C_USER}\u${C_NONE}${host}: ${C_BOLD_YELLOW}\w${C_NONE}${git_prompt}\n╰─${C_BOLD_PURPLE}\$${C_NONE} "
     else
         PS1="╭─\t \${debian_chroot:+(\$debian_chroot)}\u${host}: \w${git_prompt}\n╰─\$ "
     fi
