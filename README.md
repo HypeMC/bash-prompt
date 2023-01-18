@@ -30,3 +30,7 @@ PROMPT_COMMAND="__prompt $color_prompt yes"
 When the user is root:
 
 ![When root](screen3.png)
+
+When the last exit status iz not zero:
+
+![Non-zero exit status](screen4.png)

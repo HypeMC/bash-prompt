@@ -1,4 +1,5 @@
 function __prompt() {
+    local -r last_exit_code=$?
     local -r use_color=$1
     local -r show_host=${2:-no}
 
@@ -56,9 +57,18 @@ function __prompt() {
         fi
     fi
 
+    local error_mark=''
+    if [ "$last_exit_code" -ne 0 ]; then
+        if [ "$use_color" = yes ]; then
+            error_mark="${C_BOLD_RED}!${C_NONE}"
+        else
+            error_mark='!'
+        fi
+    fi
+
     if [ "$use_color" = yes ]; then
-        PS1="╭─${C_WHITE}\t${C_NONE} \${debian_chroot:+(\$debian_chroot)}${C_USER}\u${C_NONE}${host}: ${C_BOLD_YELLOW}\w${C_NONE}${git_prompt}\n╰─${C_BOLD_PURPLE}\$${C_NONE} "
+        PS1="╭─${C_WHITE}\t${C_NONE} \${debian_chroot:+(\$debian_chroot)}${C_USER}\u${C_NONE}${host}: ${C_BOLD_YELLOW}\w${C_NONE}${git_prompt}\n╰─${error_mark}${C_BOLD_PURPLE}\$${C_NONE} "
     else
-        PS1="╭─\t \${debian_chroot:+(\$debian_chroot)}\u${host}: \w${git_prompt}\n╰─\$ "
+        PS1="╭─\t \${debian_chroot:+(\$debian_chroot)}\u${host}: \w${git_prompt}\n╰─${error_mark}\$ "
     fi
 }
