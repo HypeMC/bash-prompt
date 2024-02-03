@@ -1,7 +1,8 @@
 function __prompt() {
     local -r last_exit_code=$?
-    local -r use_color=$1
-    local -r show_host=${2:-no}
+
+    local -r use_color="$1"
+    local -r show_host="${2:-no}"
 
     local -r C_NONE='\[\e[00m\]'
     local -r C_RED='\[\e[31m\]'
@@ -31,14 +32,12 @@ function __prompt() {
             git_untracked_files='*'
         fi
 
-        if [ "$use_color" = yes ]; then
-            local git_color=''
+        if [ "$use_color" = 'yes' ]; then
+            local git_color=$C_GREEN
             if ! git diff --quiet; then
-                git_color=${C_RED}
+                git_color=$C_RED
             elif ! git diff --cached --quiet; then
-                git_color=${C_YELLOW}
-            else
-                git_color=${C_GREEN}
+                git_color=$C_YELLOW
             fi
 
             git_prompt="[${git_color}\$(__git_ps1 \"%s\")${C_NONE}${git_untracked_files}]"
@@ -48,25 +47,30 @@ function __prompt() {
 
     fi
 
+    local hostname='\h'
+    if [ "$show_host" = 'full' ]; then
+        hostname='\H'
+    fi
+
     local host=''
-    if [ "$show_host" = yes ]; then
-        if [ "$use_color" = yes ]; then
-            host="${C_YELLOW}@${C_BOLD_RED}<${C_HOST}\h${C_BOLD_RED}>${C_NONE}"
+    if [ "$show_host" != 'no' ]; then
+        if [ "$use_color" = 'yes' ]; then
+            host="${C_YELLOW}@${C_BOLD_RED}<${C_HOST}${hostname}${C_BOLD_RED}>${C_NONE}"
         else
-            host='@!\h!'
+            host="@!${hostname}!"
         fi
     fi
 
     local error_mark=''
     if [ "$last_exit_code" -ne 0 ]; then
-        if [ "$use_color" = yes ]; then
+        if [ "$use_color" = 'yes' ]; then
             error_mark="${C_BOLD_RED}!${C_NONE}"
         else
             error_mark='!'
         fi
     fi
 
-    if [ "$use_color" = yes ]; then
+    if [ "$use_color" = 'yes' ]; then
         PS1="╭─${C_WHITE}\t${C_NONE} \${debian_chroot:+(\$debian_chroot)}${C_USER}\u${C_NONE}${host}: ${C_BOLD_YELLOW}\w${C_NONE}${git_prompt}\n╰─${error_mark}${C_BOLD_PURPLE}\$${C_NONE} "
     else
         PS1="╭─\t \${debian_chroot:+(\$debian_chroot)}\u${host}: \w${git_prompt}\n╰─${error_mark}\$ "
